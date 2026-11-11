@@ -37,6 +37,8 @@ let _ =
   in
   let module VarD = Shim.Shim(VarDArrangement.VarDArrangement(Params)) in
   let open VarD in
+  Sys.set_signal Sys.sigterm (Sys.Signal_handle (fun _ -> exit 0));
+  Sys.set_signal Sys.sigint  (Sys.Signal_handle (fun _ -> exit 0));
   main { cluster = !cluster
        ; me = !me
        ; port = !port

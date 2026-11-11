@@ -8,10 +8,10 @@ let serializeOutput out =
   let (c, os) =
     match Obj.magic out with
     | NotLeader (client_id, request_id) ->
-       (string_of_char_list (Obj.magic client_id), sprintf "NotLeader %s" (string_of_int request_id))
+       (Pstring.to_string (Obj.magic client_id), sprintf "NotLeader %s" (string_of_int request_id))
     | ClientResponse (client_id, request_id, o) ->
        let Response (k, value, old) = Obj.magic o in
-       (string_of_char_list (Obj.magic client_id),
+       (Pstring.to_string (Obj.magic client_id),
         match value, old with
         | Some v, Some o ->
            sprintf "Response %s %s %s %s"
@@ -53,10 +53,10 @@ let deserializeInp i =
     (print_endline "No match" ; None)
 
 let deserializeInput inp client_id =
-  match deserializeInp inp with
-  | Some (request_id, input) ->
-    Some (ClientRequest (Obj.magic (char_list_of_string client_id), request_id, Obj.magic input))
-  | None -> None
+  match deserializeInp inp, Pstring.of_string client_id with
+  | Some (request_id, input), Some cid ->
+    Some (ClientRequest (Obj.magic cid, request_id, Obj.magic input))
+  | _ -> None
 
 let deserializeMsg (b : bytes) : VarDRaft.msg = Marshal.from_bytes b 0
 
