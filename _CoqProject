@@ -4,6 +4,7 @@
 -Q extraction/vard-log/coq VerdiRaft
 -Q extraction/vard-serialized-log/coq VerdiRaft
 -Q extraction/vard-debug/coq VerdiRaft
+-Q ../verdi/theories Verdi
 
 theories/Raft/CommonTheorems.v
 theories/Raft/AppliedImpliesInputInterface.v
