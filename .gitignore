@@ -16,3 +16,5 @@ log
 *.vos
 *.vok
 *.pyc
+_build-prof/
+extraction/vard/_build-prof/
