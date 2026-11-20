@@ -36,7 +36,7 @@ let serializeOutput out =
   in (c, Bytes.of_string os)
 
 (* Behold, my genius optimization! *)
-let r = regexp "\\([0-9]+\\) \\([A-Z]+\\) +\\([/A-Za-z0-9]+\\|-\\) +\\([/A-Za-z0-9]+\\|-\\) +\\([/A-Za-z0-9]+\\|-\\)[^/A-Za-z0-9]*" in
+let r = regexp "\\([0-9]+\\) \\([A-Z]+\\) +\\([/A-Za-z0-9]+\\|-\\) +\\([/A-Za-z0-9]+\\|-\\) +\\([/A-Za-z0-9]+\\|-\\)[^/A-Za-z0-9]*"
 
 let deserializeInp i =
   let inp = String.trim (Bytes.to_string i) in
