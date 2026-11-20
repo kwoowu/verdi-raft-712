@@ -36,11 +36,11 @@ let serializeOutput out =
   in (c, Bytes.of_string os)
 
 (* Behold, my genius optimization! *)
-let r = regexp "\\([0-9]+\\) \\([A-Z]+\\) +\\([/A-Za-z0-9]+\\|-\\) +\\([/A-Za-z0-9]+\\|-\\) +\\([/A-Za-z0-9]+\\|-\\)[^/A-Za-z0-9]*"
+let input_regex = regexp "\\([0-9]+\\) \\([A-Z]+\\) +\\([/A-Za-z0-9]+\\|-\\) +\\([/A-Za-z0-9]+\\|-\\) +\\([/A-Za-z0-9]+\\|-\\)[^/A-Za-z0-9]*"
 
 let deserializeInp i =
   let inp = String.trim (Bytes.to_string i) in
-  if string_match r inp 0 then
+  if string_match input_regex inp 0 then
     (match (matched_group 1 inp, matched_group 2 inp,
             matched_group 3 inp, matched_group 4 inp,
             matched_group 5 inp) with
@@ -64,11 +64,12 @@ let deserializeMsg (b : bytes) : VarDRaft.msg = Marshal.from_bytes b 0
 
 let serializeMsg (msg : VarDRaft.msg) : bytes = Marshal.to_bytes msg []
 
+let client_regex = regexp "^[0-9a-f][0-9a-f][0-9a-f][0-9a-f][0-9a-f][0-9a-f][0-9a-f][0-9a-f][0-9a-f][0-9a-f][0-9a-f][0-9a-f]4[0-9a-f][0-9a-f][0-9a-f][89ab][0-9a-f][0-9a-f][0-9a-f][0-9a-f][0-9a-f][0-9a-f][0-9a-f][0-9a-f][0-9a-f][0-9a-f][0-9a-f][0-9a-f][0-9a-f][0-9a-f][0-9a-f]$"
+
 let deserializeClientId b =
   let s = Bytes.to_string b in
   (*let r = regexp "^[0-9a-f][0-9a-f][0-9a-f][0-9a-f][0-9a-f][0-9a-f][0-9a-f][0-9a-f]-[0-9a-f][0-9a-f][0-9a-f][0-9a-f]-4[0-9a-f][0-9a-f][0-9a-f]-[89ab][0-9a-f][0-9a-f][0-9a-f]-[0-9a-f][0-9a-f][0-9a-f][0-9a-f][0-9a-f][0-9a-f][0-9a-f][0-9a-f][0-9a-f][0-9a-f][0-9a-f][0-9a-f]$" in*)
-  let r = regexp "^[0-9a-f][0-9a-f][0-9a-f][0-9a-f][0-9a-f][0-9a-f][0-9a-f][0-9a-f][0-9a-f][0-9a-f][0-9a-f][0-9a-f]4[0-9a-f][0-9a-f][0-9a-f][89ab][0-9a-f][0-9a-f][0-9a-f][0-9a-f][0-9a-f][0-9a-f][0-9a-f][0-9a-f][0-9a-f][0-9a-f][0-9a-f][0-9a-f][0-9a-f][0-9a-f][0-9a-f]$" in
-  if string_match r s 0 then
+  if string_match client_regex s 0 then
     Some s
   else
     None
