@@ -16,23 +16,23 @@ let serializeOutput out =
         | Some v, Some o ->
            sprintf "Response %s %s %s %s"
              (string_of_int request_id)
-             (string_of_char_list k)
-             (string_of_char_list v)
-             (string_of_char_list o)
+             (Pstring.to_string k)
+             (Pstring.to_string v)
+             (Pstring.to_string o)
         | Some v, None ->
            sprintf "Response %s %s %s -"
              (string_of_int request_id)
-             (string_of_char_list k)
-             (string_of_char_list v)
+             (Pstring.to_string k)
+             (Pstring.to_string v)
         | None, Some o ->
            sprintf "Response %s %s - %s"
              (string_of_int request_id)
-             (string_of_char_list k)
-             (string_of_char_list o)
+             (Pstring.to_string k)
+             (Pstring.to_string o)
         | None, None ->
            sprintf "Response %s %s - -"
              (string_of_int request_id)
-             (string_of_char_list k))
+             (Pstring.to_string k))
   in (c, Bytes.of_string os)
 
 (* Behold, my genius optimization! *)
@@ -44,12 +44,12 @@ let deserializeInp i =
     (match (matched_group 1 inp, matched_group 2 inp,
             matched_group 3 inp, matched_group 4 inp,
             matched_group 5 inp) with
-     | (i, "GET", k, _, _) -> Some (int_of_string i, Get (char_list_of_string k))
-     | (i, "DEL", k, _, _) -> Some (int_of_string i, Del (char_list_of_string k))
-     | (i, "PUT", k, v, _) -> Some (int_of_string i, Put ((char_list_of_string k), (char_list_of_string v)))
-     | (i, "CAD", k, o, _) -> Some (int_of_string i, CAD (char_list_of_string k, char_list_of_string o))
-     | (i, "CAS", k, "-", v) -> Some (int_of_string i, CAS ((char_list_of_string k), None, (char_list_of_string v)))
-     | (i, "CAS", k, o, v) -> Some (int_of_string i, CAS ((char_list_of_string k), Some (char_list_of_string o), (char_list_of_string v)))
+     | (i, "GET", k, _, _) -> Some (int_of_string i, Get (Pstring.unsafe_of_string k))
+     | (i, "DEL", k, _, _) -> Some (int_of_string i, Del (Pstring.unsafe_of_string k))
+     | (i, "PUT", k, v, _) -> Some (int_of_string i, Put ((Pstring.unsafe_of_string k), (Pstring.unsafe_of_string v)))
+     | (i, "CAD", k, o, _) -> Some (int_of_string i, CAD (Pstring.unsafe_of_string k, Pstring.unsafe_of_string o))
+     | (i, "CAS", k, "-", v) -> Some (int_of_string i, CAS ((Pstring.unsafe_of_string k), None, (Pstring.unsafe_of_string v)))
+     | (i, "CAS", k, o, v) -> Some (int_of_string i, CAS ((Pstring.unsafe_of_string k), Some (Pstring.unsafe_of_string o), (Pstring.unsafe_of_string v)))
      | _ -> None)
   else
     (print_endline "No match" ; None)
